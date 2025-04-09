@@ -1,10 +1,10 @@
-package com.utc.model.validator;
+package com.utc.model.service;
 
 import com.utc.model.entity.Node;
+import com.utc.model.service.base.IService;
 
-public interface IValidator {
+public interface IValidatorService extends IService {
   
-  void create(int size);
   void validateInput(int x, int y);
   void validateInput(int value);
   boolean validateRow(int row);
@@ -12,6 +12,6 @@ public interface IValidator {
   boolean validateZone(int startRow, int startCol);
   boolean validate();
   boolean isBoardFilled();
-  Node[][] getBoard();
+  void setBoard(Node[][] board);
   void close();
 }

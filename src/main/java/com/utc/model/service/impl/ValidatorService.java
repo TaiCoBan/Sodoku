@@ -1,39 +1,19 @@
-package com.utc.model.validator.impl;
+package com.utc.model.service.impl;
 
 import com.utc.exception.ExceptionType;
 import com.utc.exception.GameException;
-import com.utc.model.validator.IValidator;
+import com.utc.model.service.IValidatorService;
 import com.utc.model.entity.Node;
 
-public class Validator implements IValidator {
+public class ValidatorService implements IValidatorService {
   
   private Node[][] board;
   
-  public Validator() {
-  }
-  
-  @Override
-  public void create(int size) {
-    try {
-      board = new Node[size][size];
-      for (int row = 0; row < size; row++) {
-        for (int col = 0; col < size; col++) {
-          board[row][col] = new Node(row, col, 0);
-        }
-      }
-    } catch (RuntimeException e) {
-      throw new GameException(ExceptionType.BOARD_INIT_EXCEPTION);
-    }
+  public ValidatorService() {
   }
   
   @Override
   public void validateInput(int x, int y) {
-//    if (x < 0 || x >= board.length) {
-//      throw new GameException(ExceptionType.INVALID_ROW);
-//    }
-//    if (y < 0 || y >= board[0].length) {
-//      throw new GameException(ExceptionType.INVALID_COL);
-//    }
     if (x < 0 || x >= board.length || y < 0 || y >= board[0].length) {
       throw new GameException(ExceptionType.INVALID_X_Y);
     }
@@ -133,7 +113,7 @@ public class Validator implements IValidator {
       }
       
       return true;
-    } catch (Exception e) {
+    } catch (RuntimeException e) {
       throw new GameException(ExceptionType.VALIDATE_EXCEPTION);
     }
   }
@@ -149,14 +129,14 @@ public class Validator implements IValidator {
         }
       }
       return true;
-    } catch (Exception e) {
+    } catch (RuntimeException e) {
       throw new GameException(ExceptionType.VALIDATE_EXCEPTION);
     }
   }
   
   @Override
-  public Node[][] getBoard() {
-    return board;
+  public void setBoard(Node[][] board) {
+    this.board = board;
   }
   
   @Override

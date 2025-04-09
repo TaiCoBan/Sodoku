@@ -10,7 +10,9 @@ public enum ExceptionType {
   INVALID_COL("Cột không hợp lệ."),
   INVALID_ROW("Hàng không hợp lệ."),
   INVALID_VALUE("Giá trị không hợp lệ."),
-  INVALID_X_Y("Tọa dộ không hợp lệ.")
+  INVALID_X_Y("Tọa dộ không hợp lệ."),
+  UNDO_EXCEPTION("Không thể undo."),
+  REDO_EXCEPTION("Không thể redo."),
   ;
   
   private String message;
