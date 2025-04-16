@@ -2,34 +2,40 @@ package com.utc.controller;
 
 import com.utc.controller.base.Controller;
 import com.utc.exception.GameException;
-import com.utc.model.service.IGamePlayService;
-import com.utc.model.service.IValidatorService;
-import com.utc.model.service.impl.GamePlayService;
-import com.utc.model.service.impl.ValidatorService;
+import com.utc.model.entity.Node;
+import com.utc.model.service.IBoardValidator;
+import com.utc.model.service.IGamePlay;
+import com.utc.model.service.ISodokuGamePlay;
+import com.utc.model.service.impl.GamePlay;
+import com.utc.model.service.impl.BoardValidator;
 import com.utc.view.ConsoleView;
 import com.utc.view.base.IView;
 
 public class GameController implements Controller {
   
-  private IGamePlayService gamePlay;
-  private IValidatorService validator;
+  private Node[][] board;
+  private ISodokuGamePlay gamePlay;
+  private IBoardValidator validator;
   private IView view;
   
   @Override
   public void create() {
-    validator = new ValidatorService();
+    validator = new BoardValidator();
     view = new ConsoleView();
-    gamePlay = new GamePlayService(validator);
+    gamePlay = new GamePlay(validator);
   }
   
   @Override
   public void launch() {
     int size = view.getInput("Nhập kích cỡ bàn cờ: ");
-    gamePlay.create(size);
-    validator.setBoard(gamePlay.getBoard());
+    createBoard(size);
+    
+    gamePlay.setBoard(board);
+    validator.setBoard(board);
+    
     while (true) {
       try {
-        view.display(gamePlay.getBoard());
+        view.display(board);
         
         int action = view.getInput("1 - Điền số \n" +
                                            "2 - Undo \n" +
@@ -40,7 +46,7 @@ public class GameController implements Controller {
           int x = view.getInput("Nhập hàng: ");
           int y = view.getInput("Nhập cột: ");
           int value = view.getInput("Nhập giá trị: ");
-          gamePlay.setCellValue(x, y, value);
+          gamePlay.move(x, y, value);
         } else if (action == 2) {
           gamePlay.undo();
         } else if (action == 3) {
@@ -52,14 +58,17 @@ public class GameController implements Controller {
           continue;
         }
         
-        if (validator.validate() && validator.isBoardFilled()) {
-          view.display(gamePlay.getBoard());
+        validator.validate();
+        
+        if (validator.isBoardFilled()) {
+          view.display(board);
           view.display("WIN !!!");
           break;
         }
         
       } catch (GameException e) {
         view.display(e.getMessage());
+        
       } catch (Exception e) {
         view.display("Lỗi không mong muốn");
       }
@@ -68,7 +77,15 @@ public class GameController implements Controller {
   
   @Override
   public void close() {
-    validator.close();
     view.close();
+  }
+  
+  private void createBoard(int size) {
+    board = new Node[size][size];
+    for (int row = 0; row < size; row++) {
+      for (int col = 0; col < size; col++) {
+        board[row][col] = new Node(row, col, 0);
+      }
+    }
   }
 }
